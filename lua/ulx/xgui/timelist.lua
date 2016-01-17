@@ -1,7 +1,7 @@
 --UTime List module for ULX GUI -- by roastchicken
 --Based off of Bans module by Stickly Man!
 
-xgui.prepareDataType( "bans" )
+xgui.prepareDataType( "times" )
 
 local xtimes = xlib.makepanel{ parent=xgui.null }
 
@@ -11,20 +11,20 @@ xtimes.timelist = xlib.makelistview{ x=5, y=30, w=572, h=310, multiselect=false,
 	xtimes.timelist:AddColumn( "Session Time" )
 	xtimes.timelist:AddColumn( "Last Visit" )
 xtimes.timelist.DoDoubleClick = function( self, LineID, line )
-	xtimes.ShowBanDetailsWindow( xgui.data.bans.cache[LineID] )
+	xtimes.ShowBanDetailsWindow( xgui.data.times.cache[LineID] )
 end
 xtimes.timelist.OnRowRightClick = function( self, LineID, line )
 	local menu = DermaMenu()
-	menu:AddOption( "Details...", function() xtimes.ShowBanDetailsWindow( xgui.data.bans.cache[LineID] ) end )
+	menu:AddOption( "Details...", function() xtimes.ShowBanDetailsWindow( xgui.data.times.cache[LineID] ) end )
 	menu:Open()
 end
 -- Change the column sorting method to hook into our own custom sort stuff.
 xtimes.timelist.SortByColumn = function( self, ColumnID, Desc )
 	local index =	ColumnID == 1 and 2 or	-- Sort by Name
-					ColumnID == 2 and 1 or	-- Sort by Admin
-					ColumnID == 3 and 4 or	-- Sort by Unban Date
-					ColumnID == 4 and 5 or	-- Sort by Reason
-									  1		-- Otherwise sort by Date
+					ColumnID == 2 and 1 or	-- Sort by Total Time
+					ColumnID == 3 and 4 or	-- Sort by Session Time
+					ColumnID == 4 and 5 or	-- Sort by Last Visit
+									  1		-- Otherwise sort by Total Time
 	xtimes.sortbox:ChooseOptionID( index )
 end
 
@@ -48,7 +48,7 @@ xtimes.searchbox.OnLoseFocus = function( pnl )
 		searchFilter = pnl:GetText()
 	end
 	xtimes.setPage( 1 )
-	xtimes.retrieveBans()
+	xtimes.retrieveTimes()
 	hook.Call( "OnTextEntryLoseFocus", nil, pnl )
 end
 
@@ -64,7 +64,7 @@ function xtimes.sortbox:OnSelect( i, v )
 	end
 	self:SetValue( "Sort: " .. v .. (sortAsc and " (Asc.)" or " (Desc.)") )
 	xtimes.setPage( 1 )
-	xtimes.retrieveBans()
+	xtimes.retrieveTimes()
 end
 
 xtimes.infoLabel = xlib.makelabel{ x=204, y=344, label="Right-click on a ban for more options", parent=xtimes }
@@ -89,22 +89,22 @@ local pageNumber = 1
 xtimes.pgleft = xlib.makebutton{ x=480, y=340, w=20, icon="icon16/arrow_left.png", centericon=true, disabled=true, parent=xtimes }
 xtimes.pgleft.DoClick = function()
 	xtimes.setPage( pageNumber - 1 )
-	xtimes.retrieveBans()
+	xtimes.retrieveTimes()
 end
 xtimes.pageSelector = xlib.makecombobox{ x=500, y=340, w=57, text="1", enableinput=true, parent=xtimes }
 function xtimes.pageSelector:OnSelect( index )
 	xtimes.setPage( index )
-	xtimes.retrieveBans()
+	xtimes.retrieveTimes()
 end
 function xtimes.pageSelector.TextEntry:OnEnter()
 	pg = math.Clamp( tonumber( self:GetValue() ) or 1, 1, numPages )
 	xtimes.setPage( pg )
-	xtimes.retrieveBans()
+	xtimes.retrieveTimes()
 end
 xtimes.pgright = xlib.makebutton{ x=557, y=340, w=20, icon="icon16/arrow_right.png", centericon=true, disabled=true, parent=xtimes }
 xtimes.pgright.DoClick = function()
 	xtimes.setPage( pageNumber + 1 )
-	xtimes.retrieveBans()
+	xtimes.retrieveTimes()
 end
 
 xtimes.setPage = function( newPage )
@@ -200,26 +200,26 @@ function xgui.ConvertTime( seconds )
 end
 
 ---Update stuff
-function xtimes.bansRefreshed()
-	xgui.data.bans.cache = {} -- Clear the bans cache
+function xtimes.timesRefreshed()
+	xgui.data.times.cache = {} -- Clear the bans cache
 
 	-- Retrieve bans if XGUI is open, otherwise it will be loaded later.
 	if xgui.anchor:IsVisible() then
-		xtimes.retrieveBans()
+		xtimes.retrieveTimes()
 	end
 end
-xgui.hookEvent( "bans", "process", xtimes.bansRefreshed )
+xgui.hookEvent( "times", "process", xtimes.timesRefreshed )
 
-function xtimes.banPageRecieved( data )
-	xgui.data.bans.cache = data
+function xtimes.timePageRecieved( data )
+	xgui.data.times.cache = data
 	xtimes.cleartimes()
 	xtimes.populateTimes()
 end
-xgui.hookEvent( "bans", "data", xtimes.banPageRecieved )
+xgui.hookEvent( "times", "data", xtimes.timePageRecieved )
 
 function xtimes.checkCache()
-	if xgui.data.bans.cache and xgui.data.bans.count ~= 0 and table.Count(xgui.data.bans.cache) == 0 then
-		xtimes.retrieveBans()
+	if xgui.data.times.cache and xgui.data.bans.count ~= 0 and table.Count(xgui.data.times.cache) == 0 then
+		xtimes.retrieveTimes()
 	end
 end
 xgui.hookEvent( "onOpen", nil, xtimes.checkCache )
@@ -228,7 +228,7 @@ function xtimes.cleartimes()
 	xtimes.timelist:Clear()
 end
 
-function xtimes.retrieveBans()
+function xtimes.retrieveTimes()
 	RunConsoleCommand( "xgui", "getbans",
 		sortMode,			-- Sort Type
 		searchFilter,		-- Filter String
@@ -239,7 +239,7 @@ function xtimes.retrieveBans()
 end
 
 function xtimes.populateTimes()
-	local cache = xgui.data.bans.cache
+	local cache = xgui.data.times.cache
 	local count = cache.count or xgui.data.bans.count
 	numPages = math.max( 1, math.ceil( count / 17 ) )
 
