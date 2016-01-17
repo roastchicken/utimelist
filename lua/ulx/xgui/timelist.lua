@@ -67,16 +67,6 @@ function xtimes.sortbox:OnSelect( i, v )
 	xtimes.retrieveBans()
 end
 
-local function banUserList( doFreeze )
-	local menu = DermaMenu()
-	for k, v in ipairs( player.GetAll() ) do
-		menu:AddOption( v:Nick(), function() xgui.ShowBanWindow( v, v:SteamID(), doFreeze ) end )
-	end
-	menu:AddSpacer()
-	if LocalPlayer():query("ulx banid") then menu:AddOption( "Ban by STEAMID...", function() xgui.ShowBanWindow() end ) end
-	menu:Open()
-end
-
 xtimes.infoLabel = xlib.makelabel{ x=204, y=344, label="Right-click on a ban for more options", parent=xtimes }
 
 
