@@ -1,5 +1,5 @@
---Bans module for ULX GUI -- by Stickly Man!
---Manages banned users and shows ban details
+--UTime List module for ULX GUI -- by roastchicken
+--Based off of Bans module by Stickly Man!
 
 xgui.prepareDataType( "bans" )
 
