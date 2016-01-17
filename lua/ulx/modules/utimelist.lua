@@ -1,0 +1,1 @@
+ULib.ucl.registerAccess( "xgui_utimelist", "superadmin", "Allows viewing of player times in XGUI.", "XGUI" )
