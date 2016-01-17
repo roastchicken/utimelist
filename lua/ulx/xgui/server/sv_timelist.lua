@@ -102,27 +102,18 @@ function times.init()
       local steamID = sortTable[i][1]
       local bandata = ULib.bans[steamID]
 
-      -- Handle filters. This is confusing, but essentially 0 means skip check, 1 means restrict if condition IS true, 2+ means restrict if condition IS NOT true. 
-      if not ( filterPermaBan > 0 and ( ( tonumber( bandata.unban ) == 0 ) == ( filterPermaBan == 1 ) ) ) then
-        if not ( filterIncomplete > 0 and ( ( bandata.time == nil ) == ( filterIncomplete == 1 ) ) ) then
+      -- Handle string filter
+      if not ( filterString and
+        not ( steamID and string.find( string.lower( steamID ), filterString ) or
+        bandata.name and string.find( string.lower( bandata.name ), filterString ) )) then
 
-          -- Handle string filter
-          if not ( filterString and
-            not ( steamID and string.find( string.lower( steamID ), filterString ) or
-              bandata.name and string.find( string.lower( bandata.name ), filterString ) or
-              bandata.reason and string.find( string.lower( bandata.reason ), filterString ) or
-              bandata.admin and string.find( string.lower( bandata.admin ), filterString ) or
-              bandata.modified_admin and string.find( string.lower( bandata.modified_admin ), filterString ) )) then
-
-            --We found a valid one! .. Now for the pagination.
-            if #bansToSend < 17 and currentEntry >= firstEntry then
-              table.insert( bansToSend, bandata )
-              bansToSend[#bansToSend].steamID = steamID
-              if noFilter and #bansToSend >= 17 then break end  -- If there is a filter, then don't stop the loop so we can get a "result" count.
-            end
-            currentEntry = currentEntry + 1
-          end
+        --We found a valid one! .. Now for the pagination.
+        if #bansToSend < 17 and currentEntry >= firstEntry then
+          table.insert( bansToSend, bandata )
+          bansToSend[#bansToSend].steamID = steamID
+          if noFilter and #bansToSend >= 17 then break end  -- If there is a filter, then don't stop the loop so we can get a "result" count.
         end
+        currentEntry = currentEntry + 1
       end
     end
     if not noFilter then bansToSend.count = currentEntry end
