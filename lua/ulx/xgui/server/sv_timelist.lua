@@ -96,7 +96,7 @@ function times.init()
     local firstEntry = (page - 1) * 17
     local currentEntry = 0
 
-    local noFilter = ( filterPermaBan == 0 and filterIncomplete == 0 and filterString == nil )
+    local noFilter = filterString == nil
 
     for i = startValue, endValue, ascending and -1 or 1 do
       local steamID = sortTable[i][1]
