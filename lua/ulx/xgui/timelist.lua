@@ -275,9 +275,4 @@ function xtimes.populateTimes()
 	end
 end
 
-function xtimes.fban( ply, cmd, args )
-	xtimes.xban( ply, cmd, args, true )
-end
-ULib.cmds.addCommandClient( "xgui fban", xtimes.fban )
-
 xgui.addModule( "Play Times", xtimes, "icon16/clock.png", "xgui_utimelist" )
