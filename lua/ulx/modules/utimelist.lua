@@ -5,6 +5,10 @@ if not sql.TableExists( "utimelist_steamids" ) then
 	sql.Query( "CREATE INDEX IDX_UTIMELIST_UNIQUEID ON utimelist_steamids ( uniqueid DESC );" )
 end
 
+function onNameChange( ply, oldNick, newNick )
+  sql.Query( "UPDATE utimelist_steamids SET lastname = '" .. newNick .. "' WHERE steamid = " .. ply:SteamID64() .. ";" )
+end
+
 function onJoin( ply )
   local sid64 = ply:SteamID64()
   local nick = ply:Nick()
@@ -12,10 +16,11 @@ function onJoin( ply )
   local row = sql.QueryRow( "SELECT lastname FROM utimelist_steamids WHERE steamid = " .. sid64 .. ";" )
   
   if row and nick ~= row.lastname then
-    sql.Query( "UPDATE utimelist_steamids SET lastname = " .. nick .. " WHERE steamid = " .. sid64 .. ";" )
+    onNameChange( ply, row.lastname, nick )
   elseif not row then
     sql.Query( "INSERT into utimelist_steamids ( steamid, uniqueid, lastname ) VALUES ( " .. sid64 .. ", " .. ply:UniqueID() .. ", '" .. nick .. "' );" )
   end
 end
 
-hook.Add( "PlayerInitialSpawn", "UTimeList_InitialSpawn", onJoin )
+hook.Add( "PlayerInitialSpawn", "UTimeList_PlayerInitialSpawn", onJoin )
+hook.Add( "ULibPlayerNameChanged", "UTimeList_ULibPlayerNameChanged", onNameChange )
