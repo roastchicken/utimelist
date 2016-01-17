@@ -251,13 +251,8 @@ function xtimes.populateTimes()
 
   cache.count = nil
 
-  for _, baninfo in pairs( cache ) do
-    xtimes.timelist:AddLine( baninfo.name or baninfo.steamID,
-          ( baninfo.admin ) and string.gsub( baninfo.admin, "%(STEAM_%w:%w:%w*%)", "" ) or "",
-          (( tonumber( baninfo.unban ) ~= 0 ) and os.date( "%c", math.min( tonumber( baninfo.unban ), 4294967295 ) )) or "Never",
-          baninfo.reason,
-          baninfo.steamID,
-          tonumber( baninfo.unban ) )
+  for _, timeinfo in pairs( cache ) do
+    xtimes.timelist:AddLine( timeinfo.name or timeinfo.steamid, timeinfo.total, 0, timeinfo.lastvisit )
   end
 end
 
