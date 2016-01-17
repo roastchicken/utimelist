@@ -67,22 +67,6 @@ function xtimes.sortbox:OnSelect( i, v )
 	xtimes.retrieveBans()
 end
 
-local hideIncomplete = 0
-xlib.makebutton{ x=455, y=6, w=95, label="Incomplete: Show", parent=xtimes, tooltip="Filters bans that are loaded by ULib, but do not have any metadata associated with them." }.DoClick = function( self )
-	hideIncomplete = hideIncomplete + 1
-	if hideIncomplete == 1 then
-		self:SetText( "Incomplete: Hide" )
-	elseif hideIncomplete == 2 then
-		self:SetText( "Incomplete: Only" )
-	elseif hideIncomplete == 3 then
-		hideIncomplete = 0
-		self:SetText( "Incomplete: Show" )
-	end
-	xtimes.setPage( 1 )
-	xtimes.retrieveBans()
-end
-
-
 local function banUserList( doFreeze )
 	local menu = DermaMenu()
 	for k, v in ipairs( player.GetAll() ) do
@@ -433,7 +417,7 @@ function xtimes.retrieveBans()
 		sortMode,			-- Sort Type
 		searchFilter,		-- Filter String
 		0,			-- Hide permabans?
-		hideIncomplete,		-- Hide bans that don't have full ULX metadata?
+		0,		-- Hide bans that don't have full ULX metadata?
 		pageNumber,			-- Page number
 		sortAsc and 1 or 0)	-- Ascending/Descending
 end
