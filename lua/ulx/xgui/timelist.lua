@@ -229,11 +229,9 @@ function xtimes.cleartimes()
 end
 
 function xtimes.retrieveTimes()
-	RunConsoleCommand( "xgui", "getbans",
+	RunConsoleCommand( "xgui", "gettimes",
 		sortMode,			-- Sort Type
 		searchFilter,		-- Filter String
-		0,			-- Hide permabans?
-		0,		-- Hide bans that don't have full ULX metadata?
 		pageNumber,			-- Page number
 		sortAsc and 1 or 0)	-- Ascending/Descending
 end
