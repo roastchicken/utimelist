@@ -154,7 +154,7 @@ function times.init()
 		-- Send bans to client via custom handling.
 		xgui.sendDataEvent( ply, 7, "times", bansToSend )
 	end
-	xgui.addCmd( "getTimes", bans.sendTimesToUser )
+	xgui.addCmd( "gettimes", bans.sendTimesToUser )
   
 end
 
