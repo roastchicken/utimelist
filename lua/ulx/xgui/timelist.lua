@@ -16,8 +16,6 @@ end
 xtimes.timelist.OnRowRightClick = function( self, LineID, line )
 	local menu = DermaMenu()
 	menu:AddOption( "Details...", function() xtimes.ShowBanDetailsWindow( xgui.data.bans.cache[LineID] ) end )
-	menu:AddOption( "Edit Ban...", function() xgui.ShowBanWindow( nil, line:GetValue( 5 ), nil, true, xgui.data.bans.cache[LineID] ) end )
-	menu:AddOption( "Remove", function() xtimes.RemoveBan( line:GetValue( 5 ), xgui.data.bans.cache[LineID] ) end )
 	menu:Open()
 end
 -- Change the column sorting method to hook into our own custom sort stuff.
