@@ -3,38 +3,38 @@
 
 xgui.prepareDataType( "bans" )
 
-local xbans = xlib.makepanel{ parent=xgui.null }
+local xtimes = xlib.makepanel{ parent=xgui.null }
 
-xbans.banlist = xlib.makelistview{ x=5, y=30, w=572, h=310, multiselect=false, parent=xbans }
-	xbans.banlist:AddColumn( "Name/SteamID" )
-	xbans.banlist:AddColumn( "Banned By" )
-	xbans.banlist:AddColumn( "Unban Date" )
-	xbans.banlist:AddColumn( "Reason" )
-xbans.banlist.DoDoubleClick = function( self, LineID, line )
-	xbans.ShowBanDetailsWindow( xgui.data.bans.cache[LineID] )
+xtimes.timelist = xlib.makelistview{ x=5, y=30, w=572, h=310, multiselect=false, parent=xtimes }
+	xtimes.timelist:AddColumn( "Name/SteamID" )
+	xtimes.timelist:AddColumn( "Banned By" )
+	xtimes.timelist:AddColumn( "Unban Date" )
+	xtimes.timelist:AddColumn( "Reason" )
+xtimes.timelist.DoDoubleClick = function( self, LineID, line )
+	xtimes.ShowBanDetailsWindow( xgui.data.bans.cache[LineID] )
 end
-xbans.banlist.OnRowRightClick = function( self, LineID, line )
+xtimes.timelist.OnRowRightClick = function( self, LineID, line )
 	local menu = DermaMenu()
-	menu:AddOption( "Details...", function() xbans.ShowBanDetailsWindow( xgui.data.bans.cache[LineID] ) end )
+	menu:AddOption( "Details...", function() xtimes.ShowBanDetailsWindow( xgui.data.bans.cache[LineID] ) end )
 	menu:AddOption( "Edit Ban...", function() xgui.ShowBanWindow( nil, line:GetValue( 5 ), nil, true, xgui.data.bans.cache[LineID] ) end )
-	menu:AddOption( "Remove", function() xbans.RemoveBan( line:GetValue( 5 ), xgui.data.bans.cache[LineID] ) end )
+	menu:AddOption( "Remove", function() xtimes.RemoveBan( line:GetValue( 5 ), xgui.data.bans.cache[LineID] ) end )
 	menu:Open()
 end
 -- Change the column sorting method to hook into our own custom sort stuff.
-xbans.banlist.SortByColumn = function( self, ColumnID, Desc )
+xtimes.timelist.SortByColumn = function( self, ColumnID, Desc )
 	local index =	ColumnID == 1 and 2 or	-- Sort by Name
 					ColumnID == 2 and 4 or	-- Sort by Admin
 					ColumnID == 3 and 6 or	-- Sort by Unban Date
 					ColumnID == 4 and 5 or	-- Sort by Reason
 									  1		-- Otherwise sort by Date
-	xbans.sortbox:ChooseOptionID( index )
+	xtimes.sortbox:ChooseOptionID( index )
 end
 
 local searchFilter = ""
-xbans.searchbox = xlib.maketextbox{ x=5, y=6, w=175, text="Search...", selectall=true, parent=xbans }
-local txtCol = xbans.searchbox:GetTextColor()
-xbans.searchbox:SetTextColor( Color( txtCol.r, txtCol.g, txtCol.b, 196 ) ) -- Set initial color
-xbans.searchbox.OnChange = function( pnl )
+xtimes.searchbox = xlib.maketextbox{ x=5, y=6, w=175, text="Search...", selectall=true, parent=xtimes }
+local txtCol = xtimes.searchbox:GetTextColor()
+xtimes.searchbox:SetTextColor( Color( txtCol.r, txtCol.g, txtCol.b, 196 ) ) -- Set initial color
+xtimes.searchbox.OnChange = function( pnl )
 	if pnl:GetText() == "" then
 		pnl:SetText( "Search..." )
 		pnl:SelectAll()
@@ -43,21 +43,21 @@ xbans.searchbox.OnChange = function( pnl )
 		pnl:SetTextColor( Color( txtCol.r, txtCol.g, txtCol.b, 255 ) )
 	end
 end
-xbans.searchbox.OnLoseFocus = function( pnl )
+xtimes.searchbox.OnLoseFocus = function( pnl )
 	if pnl:GetText() == "Search..." then
 		searchFilter = ""
 	else
 		searchFilter = pnl:GetText()
 	end
-	xbans.setPage( 1 )
-	xbans.retrieveBans()
+	xtimes.setPage( 1 )
+	xtimes.retrieveBans()
 	hook.Call( "OnTextEntryLoseFocus", nil, pnl )
 end
 
 local sortMode = 0
 local sortAsc = false
-xbans.sortbox = xlib.makecombobox{ x=185, y=6, w=150, text="Sort: Date (Desc.)", choices={ "Date", "Name", "Steam ID", "Admin", "Reason", "Unban Date", "Ban Length" }, parent=xbans }
-function xbans.sortbox:OnSelect( i, v )
+xtimes.sortbox = xlib.makecombobox{ x=185, y=6, w=150, text="Sort: Date (Desc.)", choices={ "Date", "Name", "Steam ID", "Admin", "Reason", "Unban Date", "Ban Length" }, parent=xtimes }
+function xtimes.sortbox:OnSelect( i, v )
 	if i-1 == sortMode then
 		sortAsc = not sortAsc
 	else
@@ -65,12 +65,12 @@ function xbans.sortbox:OnSelect( i, v )
 		sortAsc = false
 	end
 	self:SetValue( "Sort: " .. v .. (sortAsc and " (Asc.)" or " (Desc.)") )
-	xbans.setPage( 1 )
-	xbans.retrieveBans()
+	xtimes.setPage( 1 )
+	xtimes.retrieveBans()
 end
 
 local hidePerma = 0
-xlib.makebutton{ x=355, y=6, w=95, label="Permabans: Show", parent=xbans }.DoClick = function( self )
+xlib.makebutton{ x=355, y=6, w=95, label="Permabans: Show", parent=xtimes }.DoClick = function( self )
 	hidePerma = hidePerma + 1
 	if hidePerma == 1 then
 		self:SetText( "Permabans: Hide" )
@@ -80,12 +80,12 @@ xlib.makebutton{ x=355, y=6, w=95, label="Permabans: Show", parent=xbans }.DoCli
 		hidePerma = 0
 		self:SetText( "Permabans: Show" )
 	end
-	xbans.setPage( 1 )
-	xbans.retrieveBans()
+	xtimes.setPage( 1 )
+	xtimes.retrieveBans()
 end
 
 local hideIncomplete = 0
-xlib.makebutton{ x=455, y=6, w=95, label="Incomplete: Show", parent=xbans, tooltip="Filters bans that are loaded by ULib, but do not have any metadata associated with them." }.DoClick = function( self )
+xlib.makebutton{ x=455, y=6, w=95, label="Incomplete: Show", parent=xtimes, tooltip="Filters bans that are loaded by ULib, but do not have any metadata associated with them." }.DoClick = function( self )
 	hideIncomplete = hideIncomplete + 1
 	if hideIncomplete == 1 then
 		self:SetText( "Incomplete: Hide" )
@@ -95,8 +95,8 @@ xlib.makebutton{ x=455, y=6, w=95, label="Incomplete: Show", parent=xbans, toolt
 		hideIncomplete = 0
 		self:SetText( "Incomplete: Show" )
 	end
-	xbans.setPage( 1 )
-	xbans.retrieveBans()
+	xtimes.setPage( 1 )
+	xtimes.retrieveBans()
 end
 
 
@@ -110,16 +110,16 @@ local function banUserList( doFreeze )
 	menu:Open()
 end
 
-xlib.makebutton{ x=5, y=340, w=70, label="Ban...", parent=xbans }.DoClick = function() banUserList( false ) end
-xbans.btnFreezeBan = xlib.makebutton{ x=80, y=340, w=95, label="Freeze Ban...", parent=xbans }
-xbans.btnFreezeBan.DoClick = function() banUserList( true ) end
+xlib.makebutton{ x=5, y=340, w=70, label="Ban...", parent=xtimes }.DoClick = function() banUserList( false ) end
+xtimes.btnFreezeBan = xlib.makebutton{ x=80, y=340, w=95, label="Freeze Ban...", parent=xtimes }
+xtimes.btnFreezeBan.DoClick = function() banUserList( true ) end
 
-xbans.infoLabel = xlib.makelabel{ x=204, y=344, label="Right-click on a ban for more options", parent=xbans }
+xtimes.infoLabel = xlib.makelabel{ x=204, y=344, label="Right-click on a ban for more options", parent=xtimes }
 
 
-xbans.resultCount = xlib.makelabel{ y=344, parent=xbans }
-function xbans.setResultCount( count )
-	local pnl = xbans.resultCount
+xtimes.resultCount = xlib.makelabel{ y=344, parent=xtimes }
+function xtimes.setResultCount( count )
+	local pnl = xtimes.resultCount
 	pnl:SetText( count .. " results" )
 	pnl:SizeToContents()
 
@@ -127,69 +127,69 @@ function xbans.setResultCount( count )
 	local x, y = pnl:GetPos()
 	pnl:SetPos( 475 - width, y )
 	
-	local ix, iy = xbans.infoLabel:GetPos()
-	xbans.infoLabel:SetPos( ( 130 - width ) / 2 + 175, y )
+	local ix, iy = xtimes.infoLabel:GetPos()
+	xtimes.infoLabel:SetPos( ( 130 - width ) / 2 + 175, y )
 end
 
 local numPages = 1
 local pageNumber = 1
-xbans.pgleft = xlib.makebutton{ x=480, y=340, w=20, icon="icon16/arrow_left.png", centericon=true, disabled=true, parent=xbans }
-xbans.pgleft.DoClick = function()
-	xbans.setPage( pageNumber - 1 )
-	xbans.retrieveBans()
+xtimes.pgleft = xlib.makebutton{ x=480, y=340, w=20, icon="icon16/arrow_left.png", centericon=true, disabled=true, parent=xtimes }
+xtimes.pgleft.DoClick = function()
+	xtimes.setPage( pageNumber - 1 )
+	xtimes.retrieveBans()
 end
-xbans.pageSelector = xlib.makecombobox{ x=500, y=340, w=57, text="1", enableinput=true, parent=xbans }
-function xbans.pageSelector:OnSelect( index )
-	xbans.setPage( index )
-	xbans.retrieveBans()
+xtimes.pageSelector = xlib.makecombobox{ x=500, y=340, w=57, text="1", enableinput=true, parent=xtimes }
+function xtimes.pageSelector:OnSelect( index )
+	xtimes.setPage( index )
+	xtimes.retrieveBans()
 end
-function xbans.pageSelector.TextEntry:OnEnter()
+function xtimes.pageSelector.TextEntry:OnEnter()
 	pg = math.Clamp( tonumber( self:GetValue() ) or 1, 1, numPages )
-	xbans.setPage( pg )
-	xbans.retrieveBans()
+	xtimes.setPage( pg )
+	xtimes.retrieveBans()
 end
-xbans.pgright = xlib.makebutton{ x=557, y=340, w=20, icon="icon16/arrow_right.png", centericon=true, disabled=true, parent=xbans }
-xbans.pgright.DoClick = function()
-	xbans.setPage( pageNumber + 1 )
-	xbans.retrieveBans()
+xtimes.pgright = xlib.makebutton{ x=557, y=340, w=20, icon="icon16/arrow_right.png", centericon=true, disabled=true, parent=xtimes }
+xtimes.pgright.DoClick = function()
+	xtimes.setPage( pageNumber + 1 )
+	xtimes.retrieveBans()
 end
 
-xbans.setPage = function( newPage )
+xtimes.setPage = function( newPage )
 	pageNumber = newPage
-	xbans.pgleft:SetDisabled( pageNumber <= 1 )
-	xbans.pgright:SetDisabled( pageNumber >= numPages )
-	xbans.pageSelector.TextEntry:SetText( pageNumber )
+	xtimes.pgleft:SetDisabled( pageNumber <= 1 )
+	xtimes.pgright:SetDisabled( pageNumber >= numPages )
+	xtimes.pageSelector.TextEntry:SetText( pageNumber )
 end
 
 
-function xbans.RemoveBan( ID, bandata )
+function xtimes.RemoveBan( ID, bandata )
 	local tempstr = "<Unknown>"
 	if bandata then tempstr = bandata.name or "<Unknown>" end
 	Derma_Query( "Are you sure you would like to unban " .. tempstr .. " - " .. ID .. "?", "XGUI WARNING", 
 		"Remove",	function()
 						RunConsoleCommand( "ulx", "unban", ID ) 
-						xbans.RemoveBanDetailsWindow( ID )
+						xtimes.RemoveBanDetailsWindow( ID )
 					end,
 		"Cancel", 	function() end )
 end
 
-xbans.openWindows = {}
-function xbans.RemoveBanDetailsWindow( ID )
-	if xbans.openWindows[ID] then
-		xbans.openWindows[ID]:Remove()
-		xbans.openWindows[ID] = nil
+xtimes.openWindows = {}
+function xtimes.RemoveBanDetailsWindow( ID )
+	if xtimes.openWindows[ID] then
+		xtimes.openWindows[ID]:Remove()
+		xtimes.openWindows[ID] = nil
 	end
 end
 
-function xbans.ShowBanDetailsWindow( bandata )
+function xtimes.ShowBanDetailsWindow( bandata )
 	local wx, wy
-	if xbans.openWindows[bandata.steamID] then
-		wx, wy = xbans.openWindows[bandata.steamID]:GetPos()
-		xbans.openWindows[bandata.steamID]:Remove()
+	if xtimes.openWindows[bandata.steamID] then
+		wx, wy = xtimes.openWindows[bandata.steamID]:GetPos()
+		xtimes.openWindows[bandata.steamID]:Remove()
 	end
-	xbans.openWindows[bandata.steamID] = xlib.makeframe{ label="Ban Details", x=wx, y=wy, w=285, h=295, skin=xgui.settings.skin }
+	xtimes.openWindows[bandata.steamID] = xlib.makeframe{ label="Ban Details", x=wx, y=wy, w=285, h=295, skin=xgui.settings.skin }
 
-	local panel = xbans.openWindows[bandata.steamID]
+	local panel = xtimes.openWindows[bandata.steamID]
 	local name = xlib.makelabel{ x=50, y=30, label="Name:", parent=panel }
 	xlib.makelabel{ x=90, y=30, w=190, label=( bandata.name or "<Unknown>" ), parent=panel, tooltip=bandata.name }
 	xlib.makelabel{ x=36, y=50, label="SteamID:", parent=panel }
@@ -219,15 +219,15 @@ function xbans.ShowBanDetailsWindow( bandata )
 	end
 
 	xlib.makebutton{ x=99, y=265, w=89, label="Unban", parent=panel }.DoClick = function()
-		xbans.RemoveBan( panel.data.steamID, panel.data )
+		xtimes.RemoveBan( panel.data.steamID, panel.data )
 	end
 
 	xlib.makebutton{ x=192, y=265, w=88, label="Close", parent=panel }.DoClick = function()
-		xbans.RemoveBanDetailsWindow( panel.data.steamID )
+		xtimes.RemoveBanDetailsWindow( panel.data.steamID )
 	end
 
 	panel.btnClose.DoClick = function ( button )
-		xbans.RemoveBanDetailsWindow( panel.data.steamID )
+		xtimes.RemoveBanDetailsWindow( panel.data.steamID )
 	end
 
 	if timeleft:GetValue() ~= "N/A" then
@@ -235,7 +235,7 @@ function xbans.ShowBanDetailsWindow( bandata )
 			if panel:IsVisible() then
 				local bantime = tonumber( panel.data.unban ) - os.time()
 				if bantime <= 0 then
-					xbans.RemoveBanDetailsWindow( panel.data.steamID )
+					xtimes.RemoveBanDetailsWindow( panel.data.steamID )
 					return
 				else
 					timeleft:SetText( xgui.ConvertTime( bantime ) )
@@ -353,7 +353,7 @@ function xgui.ShowBanWindow( ply, ID, doFreeze, isUpdate, bandata )
 						.. xgui.ConvertTime( os.time() - bandata.time ) .. ".\nAre you sure you wish to continue?", "XGUI WARNING",
 					"Expire Ban", function()
 						performUpdate(btime)
-						xbans.RemoveBanDetailsWindow( bandata.steamID )
+						xtimes.RemoveBanDetailsWindow( bandata.steamID )
 					end,
 					"Cancel", function() end )
 			else
@@ -417,35 +417,35 @@ function xgui.ConvertTime( seconds )
 end
 
 ---Update stuff
-function xbans.bansRefreshed()
+function xtimes.bansRefreshed()
 	xgui.data.bans.cache = {} -- Clear the bans cache
 
 	-- Retrieve bans if XGUI is open, otherwise it will be loaded later.
 	if xgui.anchor:IsVisible() then
-		xbans.retrieveBans()
+		xtimes.retrieveBans()
 	end
 end
-xgui.hookEvent( "bans", "process", xbans.bansRefreshed )
+xgui.hookEvent( "bans", "process", xtimes.bansRefreshed )
 
-function xbans.banPageRecieved( data )
+function xtimes.banPageRecieved( data )
 	xgui.data.bans.cache = data
-	xbans.clearbans()
-	xbans.populateBans()
+	xtimes.cleartimes()
+	xtimes.populateTimes()
 end
-xgui.hookEvent( "bans", "data", xbans.banPageRecieved )
+xgui.hookEvent( "bans", "data", xtimes.banPageRecieved )
 
-function xbans.checkCache()
+function xtimes.checkCache()
 	if xgui.data.bans.cache and xgui.data.bans.count ~= 0 and table.Count(xgui.data.bans.cache) == 0 then
-		xbans.retrieveBans()
+		xtimes.retrieveBans()
 	end
 end
-xgui.hookEvent( "onOpen", nil, xbans.checkCache )
+xgui.hookEvent( "onOpen", nil, xtimes.checkCache )
 
-function xbans.clearbans()
-	xbans.banlist:Clear()
+function xtimes.cleartimes()
+	xtimes.timelist:Clear()
 end
 
-function xbans.retrieveBans()
+function xtimes.retrieveBans()
 	RunConsoleCommand( "xgui", "getbans",
 		sortMode,			-- Sort Type
 		searchFilter,		-- Filter String
@@ -455,23 +455,23 @@ function xbans.retrieveBans()
 		sortAsc and 1 or 0)	-- Ascending/Descending
 end
 
-function xbans.populateBans()
+function xtimes.populateTimes()
 	local cache = xgui.data.bans.cache
 	local count = cache.count or xgui.data.bans.count
 	numPages = math.max( 1, math.ceil( count / 17 ) )
 
-	xbans.setResultCount( count )
-	xbans.pageSelector:SetDisabled( numPages == 1 )
-	xbans.pageSelector:Clear()
+	xtimes.setResultCount( count )
+	xtimes.pageSelector:SetDisabled( numPages == 1 )
+	xtimes.pageSelector:Clear()
 	for i=1, numPages do
-		xbans.pageSelector:AddChoice(i)
+		xtimes.pageSelector:AddChoice(i)
 	end
-	xbans.setPage( math.Clamp( pageNumber, 1, numPages ) )
+	xtimes.setPage( math.Clamp( pageNumber, 1, numPages ) )
 
 	cache.count = nil
 
 	for _, baninfo in pairs( cache ) do
-		xbans.banlist:AddLine( baninfo.name or baninfo.steamID,
+		xtimes.timelist:AddLine( baninfo.name or baninfo.steamID,
 					( baninfo.admin ) and string.gsub( baninfo.admin, "%(STEAM_%w:%w:%w*%)", "" ) or "",
 					(( tonumber( baninfo.unban ) ~= 0 ) and os.date( "%c", math.min( tonumber( baninfo.unban ), 4294967295 ) )) or "Never",
 					baninfo.reason,
@@ -480,7 +480,7 @@ function xbans.populateBans()
 	end
 end
 
-function xbans.xban( ply, cmd, args, dofreeze )
+function xtimes.xban( ply, cmd, args, dofreeze )
 	if args[1] and args[1] ~= "" then
 		local target = ULib.getUser( args[1] )
 		if target then
@@ -490,16 +490,16 @@ function xbans.xban( ply, cmd, args, dofreeze )
 		xgui.ShowBanWindow()
 	end
 end
-ULib.cmds.addCommandClient( "xgui xban", xbans.xban )
+ULib.cmds.addCommandClient( "xgui xban", xtimes.xban )
 
-function xbans.fban( ply, cmd, args )
-	xbans.xban( ply, cmd, args, true )
+function xtimes.fban( ply, cmd, args )
+	xtimes.xban( ply, cmd, args, true )
 end
-ULib.cmds.addCommandClient( "xgui fban", xbans.fban )
+ULib.cmds.addCommandClient( "xgui fban", xtimes.fban )
 
-function xbans.UCLChanged()
-	xbans.btnFreezeBan:SetDisabled( not LocalPlayer():query("ulx freeze") )
+function xtimes.UCLChanged()
+	xtimes.btnFreezeBan:SetDisabled( not LocalPlayer():query("ulx freeze") )
 end
-hook.Add( "UCLChanged", "xgui_RefreshBansMenu", xbans.UCLChanged )
+hook.Add( "UCLChanged", "xgui_RefreshBansMenu", xtimes.UCLChanged )
 
-xgui.addModule( "Bans", xbans, "icon16/exclamation.png", "xgui_managebans" )
+xgui.addModule( "Play Times", xtimes, "icon16/clock.png", "xgui_utimelist" )
