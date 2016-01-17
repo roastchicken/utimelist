@@ -26,8 +26,8 @@ function times.init()
     if sortType == 1 then
       -- Times by Name
       if next( xgui.timesbyname ) == nil then
-        for k, v in pairs( ULib.bans ) do
-          table.insert( xgui.timesbyname, { k, v.name and string.upper( v.name ) or nil } )
+        for k, v in pairs( sql.Query( "SELECT steamid, lastname FROM utimelist_steamids;" ) ) do
+          table.insert( xgui.timesbyname, { v.steamid, v.lastname and string.upper( v.lastname ) or nil } )
         end
         table.sort( xgui.timesbyname, function( a, b ) return (a[2] or "\255" .. a[1]) < (b[2] or "\255" .. b[1]) end )
       end
