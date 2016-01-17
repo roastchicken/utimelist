@@ -218,7 +218,7 @@ end
 xgui.hookEvent( "times", "data", xtimes.timePageRecieved )
 
 function xtimes.checkCache()
-	if xgui.data.times.cache and xgui.data.bans.count ~= 0 and table.Count(xgui.data.times.cache) == 0 then
+	if xgui.data.times.cache and xgui.data.times.count ~= 0 and table.Count(xgui.data.times.cache) == 0 then
 		xtimes.retrieveTimes()
 	end
 end
