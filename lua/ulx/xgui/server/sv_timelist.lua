@@ -97,10 +97,28 @@ function times.init()
     local currentEntry = 0
 
     local noFilter = filterString == nil
+    
+    local playerInfo = sql.Query( "SELECT * from utimelist_steamids;" )
+    local playerTimes = sql.Query( "SELECT * from utime;" )
+    local playerData = {}
+    
+    for k, data in pairs( playerTimes ) do
+      playerData[data.player] = { uniqueid = data.player, total = data.totaltime, lastvisit = data.lastvisit }
+    end
+    
+    for k, data in pairs( playerInfo ) do
+      playerData[data.uniqueid].steamid = util.SteamIDFrom64( tostring( data.steamid ) )
+      playerData[data.uniqueid].name = data.lastname
+    end
+    
+    for uid, data in pairs( playerData ) do
+      playerData[data.steamid] = data
+      playerData[uid] = nil
+    end
 
     for i = startValue, endValue, ascending and -1 or 1 do
-      local steamID = sortTable[i][1]
-      local timedata = ULib.bans[steamID]
+      local steamID = util.SteamIDFrom64( tostring( sortTable[i][1] ) )
+      local timedata = playerData[steamID]
 
       -- Handle string filter
       if not ( filterString and
