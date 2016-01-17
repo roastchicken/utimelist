@@ -114,18 +114,6 @@ xtimes.setPage = function( newPage )
 	xtimes.pageSelector.TextEntry:SetText( pageNumber )
 end
 
-
-function xtimes.RemoveBan( ID, bandata )
-	local tempstr = "<Unknown>"
-	if bandata then tempstr = bandata.name or "<Unknown>" end
-	Derma_Query( "Are you sure you would like to unban " .. tempstr .. " - " .. ID .. "?", "XGUI WARNING", 
-		"Remove",	function()
-						RunConsoleCommand( "ulx", "unban", ID ) 
-						xtimes.RemoveBanDetailsWindow( ID )
-					end,
-		"Cancel", 	function() end )
-end
-
 xtimes.openWindows = {}
 function xtimes.RemoveBanDetailsWindow( ID )
 	if xtimes.openWindows[ID] then
