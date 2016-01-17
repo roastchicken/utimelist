@@ -67,21 +67,6 @@ function xtimes.sortbox:OnSelect( i, v )
 	xtimes.retrieveBans()
 end
 
-local hidePerma = 0
-xlib.makebutton{ x=355, y=6, w=95, label="Permabans: Show", parent=xtimes }.DoClick = function( self )
-	hidePerma = hidePerma + 1
-	if hidePerma == 1 then
-		self:SetText( "Permabans: Hide" )
-	elseif hidePerma == 2 then
-		self:SetText( "Permabans: Only" )
-	elseif hidePerma == 3 then
-		hidePerma = 0
-		self:SetText( "Permabans: Show" )
-	end
-	xtimes.setPage( 1 )
-	xtimes.retrieveBans()
-end
-
 local hideIncomplete = 0
 xlib.makebutton{ x=455, y=6, w=95, label="Incomplete: Show", parent=xtimes, tooltip="Filters bans that are loaded by ULib, but do not have any metadata associated with them." }.DoClick = function( self )
 	hideIncomplete = hideIncomplete + 1
@@ -447,7 +432,7 @@ function xtimes.retrieveBans()
 	RunConsoleCommand( "xgui", "getbans",
 		sortMode,			-- Sort Type
 		searchFilter,		-- Filter String
-		hidePerma,			-- Hide permabans?
+		0,			-- Hide permabans?
 		hideIncomplete,		-- Hide bans that don't have full ULX metadata?
 		pageNumber,			-- Page number
 		sortAsc and 1 or 0)	-- Ascending/Descending
