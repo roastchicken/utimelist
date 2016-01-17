@@ -7,9 +7,9 @@ local xtimes = xlib.makepanel{ parent=xgui.null }
 
 xtimes.timelist = xlib.makelistview{ x=5, y=30, w=572, h=310, multiselect=false, parent=xtimes }
 	xtimes.timelist:AddColumn( "Name/SteamID" )
-	xtimes.timelist:AddColumn( "Banned By" )
-	xtimes.timelist:AddColumn( "Unban Date" )
-	xtimes.timelist:AddColumn( "Reason" )
+	xtimes.timelist:AddColumn( "Total Time" )
+	xtimes.timelist:AddColumn( "Session Time" )
+	xtimes.timelist:AddColumn( "Last Visit" )
 xtimes.timelist.DoDoubleClick = function( self, LineID, line )
 	xtimes.ShowBanDetailsWindow( xgui.data.bans.cache[LineID] )
 end
@@ -23,8 +23,8 @@ end
 -- Change the column sorting method to hook into our own custom sort stuff.
 xtimes.timelist.SortByColumn = function( self, ColumnID, Desc )
 	local index =	ColumnID == 1 and 2 or	-- Sort by Name
-					ColumnID == 2 and 4 or	-- Sort by Admin
-					ColumnID == 3 and 6 or	-- Sort by Unban Date
+					ColumnID == 2 and 1 or	-- Sort by Admin
+					ColumnID == 3 and 4 or	-- Sort by Unban Date
 					ColumnID == 4 and 5 or	-- Sort by Reason
 									  1		-- Otherwise sort by Date
 	xtimes.sortbox:ChooseOptionID( index )
@@ -56,7 +56,7 @@ end
 
 local sortMode = 0
 local sortAsc = false
-xtimes.sortbox = xlib.makecombobox{ x=185, y=6, w=150, text="Sort: Date (Desc.)", choices={ "Date", "Name", "Steam ID", "Admin", "Reason", "Unban Date", "Ban Length" }, parent=xtimes }
+xtimes.sortbox = xlib.makecombobox{ x=185, y=6, w=150, text="Sort: Total Time (Desc.)", choices={ "Total Time", "Name", "Steam ID", "Session Time", "Last Visit" }, parent=xtimes }
 function xtimes.sortbox:OnSelect( i, v )
 	if i-1 == sortMode then
 		sortAsc = not sortAsc
