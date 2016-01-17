@@ -167,17 +167,6 @@ function xtimes.ShowBanDetailsWindow( bandata )
 	if bandata.modified_admin then xlib.makelabel{ x=90, y=240, label=string.match( bandata.modified_admin, "%(STEAM_%w:%w:%w*%)" ), parent=panel } end
 
 	panel.data = bandata	-- Store data on panel for future reference.
-	xlib.makebutton{ x=5, y=265, w=89, label="Edit Ban...", parent=panel }.DoClick = function()
-		xgui.ShowBanWindow( nil, panel.data.steamID, nil, true, panel.data )
-	end
-
-	xlib.makebutton{ x=99, y=265, w=89, label="Unban", parent=panel }.DoClick = function()
-		xtimes.RemoveBan( panel.data.steamID, panel.data )
-	end
-
-	xlib.makebutton{ x=192, y=265, w=88, label="Close", parent=panel }.DoClick = function()
-		xtimes.RemoveBanDetailsWindow( panel.data.steamID )
-	end
 
 	panel.btnClose.DoClick = function ( button )
 		xtimes.RemoveBanDetailsWindow( panel.data.steamID )
