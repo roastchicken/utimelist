@@ -16,81 +16,61 @@ function times.init()
   function times.clearSortCache()
     xgui.timesbyid = {}
     xgui.timesbyname = {}
-    xgui.timesbytotaltime = {}
     xgui.timesbysessiontime = {}
     xgui.timesbylastvisit = {}
+    xgui.timesbytotaltime = {}
   end
   
   function times.getSortTable( sortType )
-    -- Retrieve the sorted table of bans. If type hasn't been sorted, then sort and cache.
+    -- Retrieve the sorted table of times. If type hasn't been sorted, then sort and cache.
     if sortType == 1 then
-      -- Bans by Name
-      if next( xgui.bansbyname ) == nil then
+      -- Times by Name
+      if next( xgui.timesbyname ) == nil then
         for k, v in pairs( ULib.bans ) do
-          table.insert( xgui.bansbyname, { k, v.name and string.upper( v.name ) or nil } )
+          table.insert( xgui.timesbyname, { k, v.name and string.upper( v.name ) or nil } )
         end
-        table.sort( xgui.bansbyname, function( a, b ) return (a[2] or "\255" .. a[1]) < (b[2] or "\255" .. b[1]) end )
+        table.sort( xgui.timesbyname, function( a, b ) return (a[2] or "\255" .. a[1]) < (b[2] or "\255" .. b[1]) end )
       end
-      return xgui.bansbyname
+      return xgui.timesbyname
 
     elseif sortType == 2 then
-      -- Bans by SteamID
-      if next( xgui.bansbyid ) == nil then
+      -- Times by SteamID
+      if next( xgui.timesbyid ) == nil then
         for k, v in pairs( ULib.bans ) do
-          table.insert( xgui.bansbyid, { k } )
+          table.insert( xgui.timesbyid, { k } )
         end
-        table.sort( xgui.bansbyid, function( a, b ) return a[1] < b[1] end )
+        table.sort( xgui.timesbyid, function( a, b ) return a[1] < b[1] end )
       end
-      return xgui.bansbyid
+      return xgui.timesbyid
 
     elseif sortType == 3 then
-      -- Bans by Admin
-      if next( xgui.bansbyadmin ) == nil then
+      -- Times by Session Time
+      if next( xgui.timesbysessiontime ) == nil then
         for k, v in pairs( ULib.bans ) do
-          table.insert( xgui.bansbyadmin, { k, v.admin or "" } )
+          table.insert( xgui.timesbysessiontime, { k, v.admin or "" } )
         end
-        table.sort( xgui.bansbyadmin, function( a, b ) return a[2] < b[2] end )
+        table.sort( xgui.timesbysessiontime, function( a, b ) return a[2] < b[2] end )
       end
-      return xgui.bansbyadmin
+      return xgui.timesbysessiontime
 
     elseif sortType == 4 then
-      -- Bans by Reason
-      if next( xgui.bansbyreason ) == nil then
+      -- Times by Last Visit
+      if next( xgui.timesbylastvisit ) == nil then
         for k, v in pairs( ULib.bans ) do
-          table.insert( xgui.bansbyreason, { k, v.reason or "" } )
+          table.insert( xgui.timesbylastvisit, { k, v.reason or "" } )
         end
-        table.sort( xgui.bansbyreason, function( a, b ) return a[2] < b[2] end )
+        table.sort( xgui.timesbylastvisit, function( a, b ) return a[2] < b[2] end )
       end
-      return xgui.bansbyreason
-
-    elseif sortType == 5 then
-      -- Bans by Unban Date
-      if next( xgui.bansbyunban ) == nil then
-        for k, v in pairs( ULib.bans ) do
-          table.insert( xgui.bansbyunban, { k, v.unban or 0 } )
-        end
-        table.sort( xgui.bansbyunban, function( a, b ) return a[2] < b[2] end )
-      end
-      return xgui.bansbyunban
-
-    elseif sortType == 6 then
-      -- Bans by Ban Length
-      if next( xgui.bansbybanlength ) == nil then
-        for k, v in pairs( ULib.bans ) do
-          table.insert( xgui.bansbybanlength, { k, (tonumber(v.unban) ~= 0) and (v.unban - v.time) or nil } )
-        end
-        table.sort( xgui.bansbybanlength, function( a, b ) return (a[2] or math.huge) < (b[2] or math.huge) end )
-      end
-      return xgui.bansbybanlength
+      return xgui.timesbylastvisit
 
     else
-      if next( xgui.bansbydate ) == nil then
+      if next( xgui.timesbytotaltime ) == nil then
         for k, v in pairs( ULib.bans ) do
-          table.insert( xgui.bansbydate, { k, v.time or 0 } )
+          table.insert( xgui.timesbytotaltime, { k, v.time or 0 } )
         end
-        table.sort( xgui.bansbydate, function( a, b ) return tonumber( a[2] ) > tonumber( b[2] ) end )
+        table.sort( xgui.timesbytotaltime, function( a, b ) return tonumber( a[2] ) > tonumber( b[2] ) end )
       end
-      return xgui.bansbydate
+      return xgui.timesbytotaltime
     end
   end
 
