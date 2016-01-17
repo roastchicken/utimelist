@@ -433,18 +433,6 @@ function xtimes.populateTimes()
 	end
 end
 
-function xtimes.xban( ply, cmd, args, dofreeze )
-	if args[1] and args[1] ~= "" then
-		local target = ULib.getUser( args[1] )
-		if target then
-			xgui.ShowBanWindow( target, target:SteamID(), dofreeze )
-		end
-	else
-		xgui.ShowBanWindow()
-	end
-end
-ULib.cmds.addCommandClient( "xgui xban", xtimes.xban )
-
 function xtimes.fban( ply, cmd, args )
 	xtimes.xban( ply, cmd, args, true )
 end
