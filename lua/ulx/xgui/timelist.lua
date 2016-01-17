@@ -77,7 +77,6 @@ local function banUserList( doFreeze )
 	menu:Open()
 end
 
-xlib.makebutton{ x=5, y=340, w=70, label="Ban...", parent=xtimes }.DoClick = function() banUserList( false ) end
 xtimes.btnFreezeBan = xlib.makebutton{ x=80, y=340, w=95, label="Freeze Ban...", parent=xtimes }
 xtimes.btnFreezeBan.DoClick = function() banUserList( true ) end
 
