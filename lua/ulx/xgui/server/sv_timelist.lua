@@ -106,7 +106,7 @@ function times.init()
 		ascending = tonumber( args[4] ) == 1 or false
 
 		-- Get cached sort table to use to reference the real data.
-		sortTable = bans.getSortTable( sortType )
+		sortTable = times.getSortTable( sortType )
 
 		local bansToSend = {}
 
