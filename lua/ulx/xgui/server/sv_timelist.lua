@@ -88,7 +88,7 @@ function times.init()
     -- Get cached sort table to use to reference the real data.
     sortTable = times.getSortTable( sortType )
 
-    local bansToSend = {}
+    local timesToSend = {}
 
     -- Handle ascending or descending
     local startValue = ascending and #sortTable or 1
@@ -100,28 +100,28 @@ function times.init()
 
     for i = startValue, endValue, ascending and -1 or 1 do
       local steamID = sortTable[i][1]
-      local bandata = ULib.bans[steamID]
+      local timedata = ULib.bans[steamID]
 
       -- Handle string filter
       if not ( filterString and
         not ( steamID and string.find( string.lower( steamID ), filterString ) or
-        bandata.name and string.find( string.lower( bandata.name ), filterString ) )) then
+        timedata.name and string.find( string.lower( timedata.name ), filterString ) )) then
 
         --We found a valid one! .. Now for the pagination.
-        if #bansToSend < 17 and currentEntry >= firstEntry then
-          table.insert( bansToSend, bandata )
-          bansToSend[#bansToSend].steamID = steamID
-          if noFilter and #bansToSend >= 17 then break end  -- If there is a filter, then don't stop the loop so we can get a "result" count.
+        if #timesToSend < 17 and currentEntry >= firstEntry then
+          table.insert( timesToSend, timedata )
+          timesToSend[#timesToSend].steamID = steamID
+          if noFilter and #timesToSend >= 17 then break end  -- If there is a filter, then don't stop the loop so we can get a "result" count.
         end
         currentEntry = currentEntry + 1
       end
     end
-    if not noFilter then bansToSend.count = currentEntry end
+    if not noFilter then timesToSend.count = currentEntry end
 
     --print( "XGUI: Ban request took " .. os.clock() - perfTimer ) --Debug
 
-    -- Send bans to client via custom handling.
-    xgui.sendDataEvent( ply, 7, "times", bansToSend )
+    -- Send times to client via custom handling.
+    xgui.sendDataEvent( ply, 7, "times", timesToSend )
   end
   xgui.addCmd( "gettimes", times.sendTimesToUser )
 end
