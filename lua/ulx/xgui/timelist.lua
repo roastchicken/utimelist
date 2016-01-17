@@ -77,9 +77,6 @@ local function banUserList( doFreeze )
 	menu:Open()
 end
 
-xtimes.btnFreezeBan = xlib.makebutton{ x=80, y=340, w=95, label="Freeze Ban...", parent=xtimes }
-xtimes.btnFreezeBan.DoClick = function() banUserList( true ) end
-
 xtimes.infoLabel = xlib.makelabel{ x=204, y=344, label="Right-click on a ban for more options", parent=xtimes }
 
 
@@ -462,10 +459,5 @@ function xtimes.fban( ply, cmd, args )
 	xtimes.xban( ply, cmd, args, true )
 end
 ULib.cmds.addCommandClient( "xgui fban", xtimes.fban )
-
-function xtimes.UCLChanged()
-	xtimes.btnFreezeBan:SetDisabled( not LocalPlayer():query("ulx freeze") )
-end
-hook.Add( "UCLChanged", "xgui_RefreshBansMenu", xtimes.UCLChanged )
 
 xgui.addModule( "Play Times", xtimes, "icon16/clock.png", "xgui_utimelist" )
