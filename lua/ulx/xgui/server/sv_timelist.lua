@@ -46,8 +46,13 @@ function times.init()
     elseif sortType == 3 then
       -- Times by Session Time
       if next( xgui.timesbysessiontime ) == nil then
-        for k, v in pairs( player.GetAll() ) do
-          table.insert( xgui.timesbysessiontime, { v:SteamID64(), v:GetUTimeSessionTime() } )
+        for k, v in pairs( sql.Query( "SELECT steamid64 FROM utimelist_steamids;" ) ) do
+          local session = 0
+          local ply = player.GetBySteamID64( v.steamid64 )
+          if ply then
+            session = ply:GetUTimeSessionTime()
+          end
+          table.insert( xgui.timesbysessiontime, { v.steamid64, session } )
         end
         table.sort( xgui.timesbysessiontime, function( a, b ) return a[2] < b[2] end )
       end
