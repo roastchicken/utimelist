@@ -134,7 +134,6 @@ function times.init()
         --We found a valid one! .. Now for the pagination.
         if #timesToSend < 17 and currentEntry >= firstEntry then
           table.insert( timesToSend, timedata )
-          timesToSend[#timesToSend].steamID = steamID
           if noFilter and #timesToSend >= 17 then break end  -- If there is a filter, then don't stop the loop so we can get a "result" count.
         end
         currentEntry = currentEntry + 1
