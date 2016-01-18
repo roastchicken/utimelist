@@ -5,7 +5,7 @@ local times = {}
 function times.init()
   ULib.ucl.registerAccess( "xgui_utimelist", "superadmin", "Allows viewing of player times in XGUI.", "XGUI" )
   
-  xgui.addDataType( "times", function() return { count=table.Count( ULib.bans ) } end, "xgui_managebans", 30, 30 )
+  xgui.addDataType( "times", function() return { count=table.Count( sql.Query( "SELECT * FROM utimelist_steamids;" ) ) } end, "xgui_managebans", 30, 30 )
   
     --Misc functions
   function times.processTimes()

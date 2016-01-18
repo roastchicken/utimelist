@@ -238,7 +238,7 @@ end
 
 function xtimes.populateTimes()
   local cache = xgui.data.times.cache
-  local count = cache.count or xgui.data.bans.count
+  local count = cache.count or xgui.data.times.count
   numPages = math.max( 1, math.ceil( count / 17 ) )
 
   xtimes.setResultCount( count )
