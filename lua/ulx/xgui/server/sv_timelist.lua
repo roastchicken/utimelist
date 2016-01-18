@@ -66,8 +66,9 @@ function times.init()
 
     else
       if next( xgui.timesbytotaltime ) == nil then
-        for k, v in pairs( ULib.bans ) do
-          table.insert( xgui.timesbytotaltime, { k, v.time or 0 } )
+        for k, v in pairs( sql.Query( "SELECT steamid, uniqueid FROM utimelist_steamids;" ) ) do
+          local row = sql.QueryRow( "SELECT totaltime FROM utime WHERE player = " .. v.uniqueid .. ";" )
+          table.insert( xgui.timesbytotaltime, { v.steamid, row.totaltime or 0 } )
         end
         table.sort( xgui.timesbytotaltime, function( a, b ) return tonumber( a[2] ) > tonumber( b[2] ) end )
       end
