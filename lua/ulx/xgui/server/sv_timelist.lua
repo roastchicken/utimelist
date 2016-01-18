@@ -26,8 +26,8 @@ function times.init()
     if sortType == 1 then
       -- Times by Name
       if next( xgui.timesbyname ) == nil then
-        for k, v in pairs( sql.Query( "SELECT steamid, lastname FROM utimelist_steamids;" ) ) do
-          table.insert( xgui.timesbyname, { v.steamid, v.lastname and string.upper( v.lastname ) or nil } )
+        for k, v in pairs( sql.Query( "SELECT steamid64, lastname FROM utimelist_steamids;" ) ) do
+          table.insert( xgui.timesbyname, { v.steamid64, v.lastname and string.upper( v.lastname ) or nil } )
         end
         table.sort( xgui.timesbyname, function( a, b ) return (a[2] or "\255" .. a[1]) < (b[2] or "\255" .. b[1]) end )
       end
@@ -36,10 +36,10 @@ function times.init()
     elseif sortType == 2 then
       -- Times by SteamID
       if next( xgui.timesbyid ) == nil then
-        for k, v in pairs( sql.Query( "SELECT steamid FROM utimelist_steamids;" ) ) do
-          table.insert( xgui.timesbyid, { v.steamid } )
+        for k, v in pairs( sql.Query( "SELECT steamid64 FROM utimelist_steamids;" ) ) do
+          table.insert( xgui.timesbyid, { v.steamid64, util.SteamIDFrom64( v.steamid64 ) } )
         end
-        table.sort( xgui.timesbyid, function( a, b ) return a[1] < b[1] end )
+        table.sort( xgui.timesbyid, function( a, b ) return a[2] < b[2] end )
       end
       return xgui.timesbyid
 
@@ -56,9 +56,9 @@ function times.init()
     elseif sortType == 4 then
       -- Times by Last Visit
       if next( xgui.timesbylastvisit ) == nil then
-        for k, v in pairs( sql.Query( "SELECT steamid, uniqueid FROM utimelist_steamids;" ) ) do
+        for k, v in pairs( sql.Query( "SELECT steamid64, uniqueid FROM utimelist_steamids;" ) ) do
           local row = sql.QueryRow( "SELECT lastvisit FROM utime WHERE player = " .. v.uniqueid .. ";" )
-          table.insert( xgui.timesbylastvisit, { v.steamid, row.lastvisit } )
+          table.insert( xgui.timesbylastvisit, { v.steamid64, row.lastvisit } )
         end
         table.sort( xgui.timesbylastvisit, function( a, b ) return a[2] < b[2] end )
       end
@@ -66,9 +66,9 @@ function times.init()
 
     else
       if next( xgui.timesbytotaltime ) == nil then
-        for k, v in pairs( sql.Query( "SELECT steamid, uniqueid FROM utimelist_steamids;" ) ) do
+        for k, v in pairs( sql.Query( "SELECT steamid64, uniqueid FROM utimelist_steamids;" ) ) do
           local row = sql.QueryRow( "SELECT totaltime FROM utime WHERE player = " .. v.uniqueid .. ";" )
-          table.insert( xgui.timesbytotaltime, { v.steamid, row.totaltime or 0 } )
+          table.insert( xgui.timesbytotaltime, { v.steamid64, row.totaltime or 0 } )
         end
         table.sort( xgui.timesbytotaltime, function( a, b ) return tonumber( a[2] ) > tonumber( b[2] ) end )
       end
@@ -109,12 +109,12 @@ function times.init()
     end
     
     for k, data in pairs( playerInfo ) do
-      playerData[data.uniqueid].steamid = tostring( data.steamid )
+      playerData[data.uniqueid].steamid64 = tostring( data.steamid64 )
       playerData[data.uniqueid].name = data.lastname
     end
     
     for uid, data in pairs( playerData ) do
-      playerData[data.steamid] = data
+      playerData[data.steamid64] = data
       playerData[uid] = nil
     end
     
