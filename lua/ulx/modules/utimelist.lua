@@ -6,7 +6,7 @@ if not sql.TableExists( "utimelist_steamids" ) then
 end
 
 function onNameChange( ply, oldNick, newNick )
-  sql.Query( "UPDATE utimelist_steamids SET lastname = '" .. newNick .. "' WHERE steamid = " .. ply:SteamID64() .. ";" )
+  sql.Query( "UPDATE utimelist_steamids SET lastname = " .. sql.SQLStr( newNick ) .. " WHERE steamid = " .. ply:SteamID64() .. ";" )
 end
 
 function onJoin( ply )
@@ -18,7 +18,7 @@ function onJoin( ply )
   if row and nick ~= row.lastname then
     onNameChange( ply, row.lastname, nick )
   elseif not row then
-    sql.Query( "INSERT into utimelist_steamids ( steamid, uniqueid, lastname ) VALUES ( " .. sid64 .. ", " .. ply:UniqueID() .. ", '" .. nick .. "' );" )
+    sql.Query( "INSERT into utimelist_steamids ( steamid, uniqueid, lastname ) VALUES ( " .. sid64 .. ", " .. ply:UniqueID() .. ", " .. sql.SQLStr( nick ) .. " );" )
   end
 end
 
