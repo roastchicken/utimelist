@@ -36,8 +36,8 @@ function times.init()
     elseif sortType == 2 then
       -- Times by SteamID
       if next( xgui.timesbyid ) == nil then
-        for k, v in pairs( ULib.bans ) do
-          table.insert( xgui.timesbyid, { k } )
+        for k, v in pairs( sql.Query( "SELECT steamid FROM utimelist_steamids;" ) ) do
+          table.insert( xgui.timesbyid, { v.steamid } )
         end
         table.sort( xgui.timesbyid, function( a, b ) return a[1] < b[1] end )
       end
