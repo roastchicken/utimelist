@@ -105,7 +105,7 @@ function times.init()
     local playerData = {}
     
     for k, data in pairs( playerTimes ) do
-      playerData[data.player] = { uniqueid = data.player, total = data.totaltime, lastvisit = data.lastvisit }
+      playerData[data.player] = { uniqueid = data.player, total = data.totaltime, session = 0, lastvisit = data.lastvisit }
     end
     
     for k, data in pairs( playerInfo ) do
@@ -116,6 +116,10 @@ function times.init()
     for uid, data in pairs( playerData ) do
       playerData[data.steamid] = data
       playerData[uid] = nil
+    end
+    
+    for k, ply in ipairs( player.GetAll() ) do
+      playerData[ply:SteamID()].session = ply:GetUTimeSessionTime()
     end
 
     for i = startValue, endValue, ascending and -1 or 1 do
