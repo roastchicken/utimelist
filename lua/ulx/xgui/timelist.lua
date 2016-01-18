@@ -252,7 +252,7 @@ function xtimes.populateTimes()
   cache.count = nil
 
   for _, timeinfo in pairs( cache ) do
-    xtimes.timelist:AddLine( timeinfo.name or timeinfo.steamid, Utime.timeToStr( timeinfo.total ), 0, os.date( "%c", timeinfo.lastvisit ) )
+    xtimes.timelist:AddLine( timeinfo.name or timeinfo.steamid, Utime.timeToStr( timeinfo.total ), Utime.timeToStr( timeinfo.session ), os.date( "%c", timeinfo.lastvisit ) )
   end
 end
 
