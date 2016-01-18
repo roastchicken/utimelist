@@ -46,8 +46,8 @@ function times.init()
     elseif sortType == 3 then
       -- Times by Session Time
       if next( xgui.timesbysessiontime ) == nil then
-        for k, v in pairs( ULib.bans ) do
-          table.insert( xgui.timesbysessiontime, { k, v.admin or "" } )
+        for k, v in pairs( player.GetAll() ) do
+          table.insert( xgui.timesbysessiontime, { v:SteamID64(), v:GetUTimeSessionTime() } )
         end
         table.sort( xgui.timesbysessiontime, function( a, b ) return a[2] < b[2] end )
       end
