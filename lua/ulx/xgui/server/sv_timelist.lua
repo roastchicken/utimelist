@@ -56,8 +56,9 @@ function times.init()
     elseif sortType == 4 then
       -- Times by Last Visit
       if next( xgui.timesbylastvisit ) == nil then
-        for k, v in pairs( ULib.bans ) do
-          table.insert( xgui.timesbylastvisit, { k, v.reason or "" } )
+        for k, v in pairs( sql.Query( "SELECT steamid, uniqueid FROM utimelist_steamids;" ) ) do
+          local row = sql.QueryRow( "SELECT lastvisit FROM utime WHERE player = " .. v.uniqueid .. ";" )
+          table.insert( xgui.timesbylastvisit, { v.steamid, row.lastvisit } )
         end
         table.sort( xgui.timesbylastvisit, function( a, b ) return a[2] < b[2] end )
       end
