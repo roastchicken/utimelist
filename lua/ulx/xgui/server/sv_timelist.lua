@@ -109,7 +109,7 @@ function times.init()
     end
     
     for k, data in pairs( playerInfo ) do
-      playerData[data.uniqueid].steamid = util.SteamIDFrom64( tostring( data.steamid ) )
+      playerData[data.uniqueid].steamid = tostring( data.steamid )
       playerData[data.uniqueid].name = data.lastname
     end
     
@@ -119,12 +119,12 @@ function times.init()
     end
     
     for k, ply in ipairs( player.GetAll() ) do
-      playerData[ply:SteamID()].session = ply:GetUTimeSessionTime()
+      playerData[ply:SteamID64()].session = ply:GetUTimeSessionTime()
     end
 
     for i = startValue, endValue, ascending and -1 or 1 do
       local steamID = util.SteamIDFrom64( tostring( sortTable[i][1] ) )
-      local timedata = playerData[steamID]
+      local timedata = playerData[sortTable[i][1]]
 
       -- Handle string filter
       if not ( filterString and
